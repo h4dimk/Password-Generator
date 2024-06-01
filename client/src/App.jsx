@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "./services/axiosService";
 import PopupMessage from "./components/PopupMessage";
 
-
 function App() {
   const [length, setLength] = useState(12);
   const [options, setOptions] = useState({
@@ -13,22 +12,35 @@ function App() {
   });
   const [generatedPassword, setGeneratedPassword] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleGeneratePassword = async () => {
+    if (
+      !options.uppercase &&
+      !options.lowercase &&
+      !options.numbers &&
+      !options.special
+    ) {
+      setErrorMessage("Please choose at least one option.");
+      return;
+    }
     try {
       const response = await axios.post("/passwords", { length, options });
       const data = response.data;
       console.log(data);
       setGeneratedPassword(data.password);
+      setErrorMessage("");
     } catch (error) {
       console.error("Error generating password:", error);
+      setErrorMessage(error.response.data.message);
     }
   };
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(generatedPassword)
+    navigator.clipboard
+      .writeText(generatedPassword)
       .then(() => {
-        setShowPopup(true); // Show popup when password is copied
+        setShowPopup(true);
       })
       .catch((error) => {
         console.error("Error copying password to clipboard:", error);
@@ -47,6 +59,7 @@ function App() {
         <h1 className="text-3xl font-bold text-teal-500 mb-4">
           Password Generator
         </h1>
+        {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
         <div className="flex mb-4 items-center">
           <input
             type="number"
