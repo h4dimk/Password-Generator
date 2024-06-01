@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "./services/axiosService";
-import { data } from "autoprefixer";
+import PopupMessage from "./components/PopupMessage";
+
 
 function App() {
   const [length, setLength] = useState(12);
@@ -11,6 +12,7 @@ function App() {
     special: true,
   });
   const [generatedPassword, setGeneratedPassword] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleGeneratePassword = async () => {
     try {
@@ -24,87 +26,103 @@ function App() {
   };
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(generatedPassword);
+    navigator.clipboard.writeText(generatedPassword)
+      .then(() => {
+        setShowPopup(true); // Show popup when password is copied
+      })
+      .catch((error) => {
+        console.error("Error copying password to clipboard:", error);
+      });
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-semibold mb-4">Password Generator</h1>
-      <div className="flex mb-4">
-        <input
-          type="number"
-          className="w-20 mr-4 rounded-md border-gray-300 p-2 focus:outline-none"
-          value={length}
-          onChange={(e) => setLength(e.target.value)}
+    <>
+      {showPopup && (
+        <PopupMessage
+          message="Password copied to clipboard!"
+          onClose={() => setShowPopup(false)}
         />
-        <label className="mr-2">Length:</label>
-        <div className="mr-4">
+      )}
+      <div className="container mx-auto px-4 py-8 flex flex-col justify-center items-center">
+        <h1 className="text-3xl font-bold text-teal-500 mb-4">
+          Password Generator
+        </h1>
+        <div className="flex mb-4 items-center">
           <input
-            type="checkbox"
-            checked={options.uppercase}
-            onChange={(e) =>
-              setOptions({ ...options, uppercase: e.target.checked })
-            }
-            className="mr-1"
+            type="number"
+            className="w-20 mr-4 rounded-md bg-gray-100 p-2 focus:outline-teal-500 focus:ring-teal-500"
+            value={length}
+            onChange={(e) => setLength(e.target.value)}
           />
-          <label>Uppercase</label>
+          <label className="mr-2 text-gray-700">Length:</label>
+          <div className="flex items-center mr-4">
+            <input
+              type="checkbox"
+              checked={options.uppercase}
+              onChange={(e) =>
+                setOptions({ ...options, uppercase: e.target.checked })
+              }
+              className="mr-1"
+            />
+            <label className="text-gray-700 mr-2">Uppercase</label>
+          </div>
+          <div className="flex items-center mr-4">
+            <input
+              type="checkbox"
+              checked={options.lowercase}
+              onChange={(e) =>
+                setOptions({ ...options, lowercase: e.target.checked })
+              }
+              className="mr-1"
+            />
+            <label className="text-gray-700 mr-2">Lowercase</label>
+          </div>
+          <div className="flex items-center mr-4">
+            <input
+              type="checkbox"
+              checked={options.numbers}
+              onChange={(e) =>
+                setOptions({ ...options, numbers: e.target.checked })
+              }
+              className="mr-1"
+            />
+            <label className="text-gray-700 mr-2">Numbers</label>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={options.special}
+              onChange={(e) =>
+                setOptions({ ...options, special: e.target.checked })
+              }
+              className="mr-1"
+            />
+            <label className="text-gray-700 mr-2">Special Characters</label>
+          </div>
         </div>
-        <div className="mr-4">
+        <div className="flex justify-between w-full">
           <input
-            type="checkbox"
-            checked={options.lowercase}
-            onChange={(e) =>
-              setOptions({ ...options, lowercase: e.target.checked })
-            }
-            className="mr-1"
+            type="text"
+            className="w-full rounded-md bg-gray-100 px-3 py-2 focus:outline-teal-500 focus:ring-teal-500"
+            value={generatedPassword}
+            readOnly
           />
-          <label>Lowercase</label>
-        </div>
-        <div className="mr-4">
-          <input
-            type="checkbox"
-            checked={options.numbers}
-            onChange={(e) =>
-              setOptions({ ...options, numbers: e.target.checked })
-            }
-            className="mr-1"
-          />
-          <label>Numbers</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={options.special}
-            onChange={(e) =>
-              setOptions({ ...options, special: e.target.checked })
-            }
-            className="mr-1"
-          />
-          <label>Special Characters</label>
+          <button
+            className="bg-teal-500 text-white px-4 py-2 rounded-md shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            onClick={handleGeneratePassword}
+          >
+            Generate Password
+          </button>
+          <button
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus-ring-offset-2 focus:ring-gray-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            onClick={handleCopyToClipboard}
+            disabled={!generatedPassword}
+          >
+            Copy to Clipboard
+          </button>
         </div>
       </div>
-      <div className="flex mb-4">
-        <input
-          type="text"
-          className="w-full rounded-md border-gray-300 p-2 focus:outline-none"
-          value={generatedPassword}
-          readOnly
-        />
-        <button
-          className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none"
-          onClick={handleGeneratePassword}
-        >
-          Generate Password
-        </button>
-        <button
-          className="ml-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-md focus:outline-none"
-          onClick={handleCopyToClipboard}
-          disabled={!generatedPassword}
-        >
-          Copy to Clipboard
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
 
