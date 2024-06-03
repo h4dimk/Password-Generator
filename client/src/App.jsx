@@ -55,83 +55,107 @@ function App() {
           onClose={() => setShowPopup(false)}
         />
       )}
-      <div className="container mx-auto px-4 py-8 flex flex-col justify-center items-center">
-        <h1 className="text-3xl font-bold text-teal-500 mb-4">
-          Password Generator
+      <div className="password-generator flex flex-col items-center justify-center h-screen bg-gradient-to-r from-gray-700 to-gray-900">
+        <h1 className="text-4xl font-bold text-white mb-8">
+          Strong Password Generator
         </h1>
-        {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
-        <div className="flex mb-4 items-center">
-          <input
-            type="number"
-            className="w-20 mr-4 rounded-md bg-gray-100 p-2 focus:outline-teal-500 focus:ring-teal-500"
-            value={length}
-            onChange={(e) => setLength(e.target.value)}
-          />
-          <label className="mr-2 text-gray-700">Length:</label>
-          <div className="flex items-center mr-4">
-            <input
-              type="checkbox"
-              checked={options.uppercase}
-              onChange={(e) =>
-                setOptions({ ...options, uppercase: e.target.checked })
-              }
-              className="mr-1"
-            />
-            <label className="text-gray-700 mr-2">Uppercase</label>
+
+        {/* Error Message (if any) */}
+        {errorMessage && (
+          <div className="error-message text-red-500 text-center mb-4">
+            {errorMessage}
           </div>
-          <div className="flex items-center mr-4">
-            <input
-              type="checkbox"
-              checked={options.lowercase}
-              onChange={(e) =>
-                setOptions({ ...options, lowercase: e.target.checked })
-              }
-              className="mr-1"
-            />
-            <label className="text-gray-700 mr-2">Lowercase</label>
-          </div>
-          <div className="flex items-center mr-4">
-            <input
-              type="checkbox"
-              checked={options.numbers}
-              onChange={(e) =>
-                setOptions({ ...options, numbers: e.target.checked })
-              }
-              className="mr-1"
-            />
-            <label className="text-gray-700 mr-2">Numbers</label>
-          </div>
+        )}
+
+        <div className="options-container flex flex-col items-center gap-4">
           <div className="flex items-center">
+            <label className="text-lg text-white mr-4">Length:</label>
             <input
-              type="checkbox"
-              checked={options.special}
-              onChange={(e) =>
-                setOptions({ ...options, special: e.target.checked })
-              }
-              className="mr-1"
+              type="number"
+              className="w-20 rounded-md bg-gray-200 px-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
             />
-            <label className="text-gray-700 mr-2">Special Characters</label>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="checkbox-container flex items-center">
+              <input
+                type="checkbox"
+                id="uppercase"
+                checked={options.uppercase}
+                onChange={(e) =>
+                  setOptions({ ...options, uppercase: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label htmlFor="uppercase" className="text-lg text-white">
+                Uppercase Letters
+              </label>
+            </div>
+            <div className="checkbox-container flex items-center">
+              <input
+                type="checkbox"
+                id="lowercase"
+                checked={options.lowercase}
+                onChange={(e) =>
+                  setOptions({ ...options, lowercase: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label htmlFor="lowercase" className="text-lg text-white">
+                Lowercase Letters
+              </label>
+            </div>
+            <div className="checkbox-container flex items-center">
+              <input
+                type="checkbox"
+                id="numbers"
+                checked={options.numbers}
+                onChange={(e) =>
+                  setOptions({ ...options, numbers: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label htmlFor="numbers" className="text-lg text-white">
+                Numbers
+              </label>
+            </div>
+            <div className="checkbox-container flex items-center">
+              <input
+                type="checkbox"
+                id="special"
+                checked={options.special}
+                onChange={(e) =>
+                  setOptions({ ...options, special: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label htmlFor="special" className="text-lg text-white">
+                Special Characters
+              </label>
+            </div>
           </div>
         </div>
-        <div className="flex justify-between w-full">
+
+        <div className="password-container flex mt-8">
           <input
             type="text"
-            className="w-full rounded-md bg-gray-100 px-3 py-2 focus:outline-teal-500 focus:ring-teal-500"
+            className="w-full rounded-md bg-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             value={generatedPassword}
             readOnly
           />
           <button
-            className="bg-teal-500 text-white px-4 py-2 rounded-md shadow hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="generate-button bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400 disabled:cursor-not-allowed ml-4"
             onClick={handleGeneratePassword}
           >
             Generate Password
           </button>
           <button
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus-ring-offset-2 focus:ring-gray-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="copy-button bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:bg-gray-400 disabled:cursor-not-allowed ml-4"
             onClick={handleCopyToClipboard}
             disabled={!generatedPassword}
           >
-            Copy to Clipboard
+            Copy
           </button>
         </div>
       </div>
